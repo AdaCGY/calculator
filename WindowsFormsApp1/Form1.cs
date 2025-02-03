@@ -378,7 +378,7 @@ namespace WindowsFormsApp1
             richTextBox紀錄.Text += labelresult.Text + "\n";
             labelresult.Text = Result.ToString();
         }
-        private void button點_Click(object sender, EventArgs e) //-------------------------------------  此功能尚有許多bug
+        private void button點_Click(object sender, EventArgs e)
         {
             LengthValidation("請先輸入數字");
             if (NumberList.Count == 0)
@@ -391,7 +391,6 @@ namespace WindowsFormsApp1
                 NumberList.Add(".");
                 labelresult.Text += ".";
             }
-            //------------------------------------------------------------------------------------------------小數點後必須輸入數字
         }
         private void buttondelete_Click(object sender, EventArgs e) //-------------------------------- 此功能尚有許多bug(刪除小數點、刪除功能鍵)
         {
