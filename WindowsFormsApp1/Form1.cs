@@ -142,9 +142,13 @@ namespace WindowsFormsApp1
             labelresult.Text += "9";
         }
 
-        private void button加_Click(object sender, EventArgs e) //-----------------------------------功能鍵尚需檢查，且有多次點擊bug
+        private void button加_Click(object sender, EventArgs e) //-----------------------------------功能鍵尚需檢查
         {
             LengthValidation("沒有東西可以算，請先輸入數字");
+            if(NumberList.Count == 0)
+            {
+                return;
+            }
             小數點 -= button點_Click;
             if (減 != null || 乘 != null || 除 != null)
             {
@@ -194,6 +198,10 @@ namespace WindowsFormsApp1
         private void button減_Click(object sender, EventArgs e)
         {
             LengthValidation("沒有東西可以算，請先輸入數字");
+            if (NumberList.Count == 0)
+            {
+                return;
+            }
             小數點 -= button點_Click;
             if (加 != null || 乘 != null || 除 != null) //先檢查前面是否有其他運算未結束，檢查後再來看減號(此按鈕主功能)部分
             {
@@ -246,6 +254,10 @@ namespace WindowsFormsApp1
         private void button乘_Click(object sender, EventArgs e)
         {
             LengthValidation("沒有東西可以算，請先輸入數字");
+            if (NumberList.Count == 0)
+            {
+                return;
+            }
             小數點 -= button點_Click;
             if (減 != null || 加 != null || 除 != null)
             {
@@ -295,6 +307,10 @@ namespace WindowsFormsApp1
         private void button除_Click(object sender, EventArgs e)
         {
             LengthValidation("沒有東西可以算，請先輸入數字");
+            if (NumberList.Count == 0)
+            {
+                return;
+            }
             小數點 -= button點_Click;
             if (減 != null || 乘 != null || 加 != null)
             {
@@ -349,6 +365,10 @@ namespace WindowsFormsApp1
             {
                 throw new Exception("沒有東西可以算，請輸入計算");
             }
+            if (NumberList.Count == 0)
+            {
+                return;
+            }
             小數點 -= button點_Click;
             等於 += button等於_Click;
             Number2 = GetNumber();
@@ -376,6 +396,10 @@ namespace WindowsFormsApp1
         private void button點_Click(object sender, EventArgs e) //-------------------------------------  此功能尚有許多bug
         {
             LengthValidation("請先輸入數字");
+            if (NumberList.Count == 0)
+            {
+                return;
+            }
             if (小數點 == null)
             {
                 小數點 += button點_Click;
@@ -448,9 +472,9 @@ namespace WindowsFormsApp1
             等於 -= button等於_Click;
         }
         /// <summary>
-        /// 檢查目前計算之字串長度，確保功能鍵正常使用
+        /// 檢查目前計算之字串長度，確保沒有數字輸入的情況下不會開始計算
         /// </summary>
-        /// <param name="message">錯誤提示訊息</param>
+        /// <param name="message">當前錯誤提示訊息</param>
         /// <exception cref="Exception"></exception>
         public void LengthValidation(string message)
         {
@@ -460,8 +484,6 @@ namespace WindowsFormsApp1
             }
         }
     } 
-    delegate void CaluEventHandler(EventHandler eventHandler,EventArgs args);
-    delegate void ClassOfForm1Method(Form1 form);
     
     interface ICaluValidation
     {
