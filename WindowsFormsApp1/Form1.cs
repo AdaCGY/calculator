@@ -190,6 +190,7 @@ namespace WindowsFormsApp1
                 }
             }
         }
+
         private void button減_Click(object sender, EventArgs e)
         {
             LengthValidation("沒有東西可以算，請先輸入數字");
@@ -238,8 +239,9 @@ namespace WindowsFormsApp1
                     除 -= button除_Click;
                     labelresult.Text += "-";
                 }
+            
             }
-        }
+    }
 
         private void button乘_Click(object sender, EventArgs e)
         {
@@ -456,10 +458,6 @@ namespace WindowsFormsApp1
             {
                 throw new Exception(message);
             }
-        }
-        public void CheckEvent(EventHandler even,ClassOfForm1Method method)
-        {
-            
         }
     } 
     delegate void CaluEventHandler(EventHandler eventHandler,EventArgs args);
