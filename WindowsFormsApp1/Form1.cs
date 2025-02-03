@@ -20,6 +20,7 @@ namespace WindowsFormsApp1
         public event EventHandler 除;
         public event EventHandler 等於;
         public event EventHandler 小數點;
+        public event EventHandler 未歸零;
 
         public decimal Number1 { get; set; }
         public decimal Number2 { get; set; }
@@ -34,121 +35,87 @@ namespace WindowsFormsApp1
 
         private void buttonN0_Click(object sender, EventArgs e)
         {
-            if (等於 != null)
-            {
-                MessageBox.Show("請注意，您尚未歸零");
-                等於 -= button等於_Click;
-            }
+            Check_Reset_NotReturnToZero_ForNumber();
             NumberList.Add("0");
             labelresult.Text += "0";
         }
 
         private void buttonN1_Click(object sender, EventArgs e)
         {
-            if (等於 != null)
-            {
-                MessageBox.Show("請注意，您尚未歸零");
-                等於 -= button等於_Click;
-            }
+            Check_Reset_NotReturnToZero_ForNumber();
             NumberList.Add("1");
             labelresult.Text += "1";
         }
 
         private void buttonN2_Click(object sender, EventArgs e)
         {
-            if (等於 != null)
-            {
-                MessageBox.Show("請注意，您尚未歸零");
-                等於 -= button等於_Click;
-            }
+            Check_Reset_NotReturnToZero_ForNumber();
             NumberList.Add("2");
             labelresult.Text += "2";
         }
 
         private void buttonN3_Click(object sender, EventArgs e)
         {
-            if (等於 != null)
-            {
-                MessageBox.Show("請注意，您尚未歸零");
-                等於 -= button等於_Click;
-            }
+            Check_Reset_NotReturnToZero_ForNumber();
             NumberList.Add("3");
             labelresult.Text += "3";
         }
 
         private void buttonN4_Click(object sender, EventArgs e)
         {
-            if (等於 != null)
-            {
-                MessageBox.Show("請注意，您尚未歸零");
-                等於 -= button等於_Click;
-            }
+            Check_Reset_NotReturnToZero_ForNumber();
             NumberList.Add("4");
             labelresult.Text += "4";
         }
 
         private void buttonN5_Click(object sender, EventArgs e)
         {
-            if (等於 != null)
-            {
-                MessageBox.Show("請注意，您尚未歸零");
-                等於 -= button等於_Click;
-            }
+            Check_Reset_NotReturnToZero_ForNumber();
             NumberList.Add("5");
             labelresult.Text += "5";
         }
 
         private void buttonN6_Click(object sender, EventArgs e)
         {
-            if (等於 != null)
-            {
-                MessageBox.Show("請注意，您尚未歸零");
-                等於 -= button等於_Click;
-            }
+            Check_Reset_NotReturnToZero_ForNumber();
             NumberList.Add("6");
             labelresult.Text += "6";
         }
 
         private void buttonN7_Click(object sender, EventArgs e)
         {
-            if (等於 != null)
-            {
-                MessageBox.Show("請注意，您尚未歸零");
-                等於 -= button等於_Click;
-            }
+            Check_Reset_NotReturnToZero_ForNumber();
             NumberList.Add("7");
             labelresult.Text += "7";
         }
 
         private void buttonN8_Click(object sender, EventArgs e)
         {
-            if (等於 != null)
-            {
-                MessageBox.Show("請注意，您尚未歸零");
-                等於 -= button等於_Click;
-            }
+            Check_Reset_NotReturnToZero_ForNumber();
             NumberList.Add("8");
             labelresult.Text += "8";
         }
 
         private void buttonN9_Click(object sender, EventArgs e)
         {
-            if (等於 != null)
-            {
-                MessageBox.Show("請注意，您尚未歸零");
-                等於 -= button等於_Click;
-            }
+            Check_Reset_NotReturnToZero_ForNumber();
             NumberList.Add("9");
             labelresult.Text += "9";
         }
 
-        private void button加_Click(object sender, EventArgs e) //-----------------------------------功能鍵尚需檢查
+        private void button加_Click(object sender, EventArgs e)
         {
             LengthValidation("沒有東西可以算，請先輸入數字");
-            if(NumberList.Count == 0)
+            if (Check_Reset_NotReturnToZero_ForOperationButton() == false )
+            {
+                加 += button加_Click;
+                未歸零 += button加_Click;
+            }
+            if(NumberList.Count == 0 && 未歸零 == null)
             {
                 return;
             }
+            未歸零 -= button加_Click;
             小數點 -= button點_Click;
             if (減 != null || 乘 != null || 除 != null)
             {
@@ -198,10 +165,16 @@ namespace WindowsFormsApp1
         private void button減_Click(object sender, EventArgs e)
         {
             LengthValidation("沒有東西可以算，請先輸入數字");
-            if (NumberList.Count == 0)
+            if (Check_Reset_NotReturnToZero_ForOperationButton() == false)
+            {
+                減 += button減_Click;
+                未歸零 += button減_Click;
+            }
+            if (NumberList.Count == 0 && 未歸零 == null)
             {
                 return;
             }
+            未歸零 -= button減_Click;
             小數點 -= button點_Click;
             if (加 != null || 乘 != null || 除 != null) //先檢查前面是否有其他運算未結束，檢查後再來看減號(此按鈕主功能)部分
             {
@@ -254,10 +227,16 @@ namespace WindowsFormsApp1
         private void button乘_Click(object sender, EventArgs e)
         {
             LengthValidation("沒有東西可以算，請先輸入數字");
-            if (NumberList.Count == 0)
+            if (Check_Reset_NotReturnToZero_ForOperationButton() == false)
+            {
+                乘 += button乘_Click;
+                未歸零 += button乘_Click;
+            }
+            if (NumberList.Count == 0 && 未歸零 == null)
             {
                 return;
             }
+            未歸零 -= button乘_Click;
             小數點 -= button點_Click;
             if (減 != null || 加 != null || 除 != null)
             {
@@ -307,10 +286,16 @@ namespace WindowsFormsApp1
         private void button除_Click(object sender, EventArgs e)
         {
             LengthValidation("沒有東西可以算，請先輸入數字");
-            if (NumberList.Count == 0)
+            if (Check_Reset_NotReturnToZero_ForOperationButton() == false)
+            {
+                除 += button除_Click;
+                未歸零 += button除_Click;
+            }
+            if (NumberList.Count == 0 && 未歸零 == null)
             {
                 return;
             }
+            未歸零 -= button除_Click;
             小數點 -= button點_Click;
             if (減 != null || 乘 != null || 加 != null)
             {
@@ -357,7 +342,7 @@ namespace WindowsFormsApp1
             }
         }
 
-        private void button等於_Click(object sender, EventArgs e) //使用等於之後的直接運算會有問題
+        private void button等於_Click(object sender, EventArgs e) 
         {
             LengthValidation("沒有東西可以算，請先輸入數字");
 
@@ -470,6 +455,50 @@ namespace WindowsFormsApp1
             乘 -= button乘_Click;
             除 -= button除_Click;
             等於 -= button等於_Click;
+        }
+        /// <summary>
+        /// 上輪計算未歸零情況下點擊數字鍵 >> 會以當前顯示之數字繼續運算
+        /// </summary>
+        private void Check_Reset_NotReturnToZero_ForNumber()
+        {
+            if (等於 == null)
+            {
+                return;
+            }
+            if (等於 != null)
+            {
+                MessageBox.Show("請注意，您尚未歸零");
+                NumberList.Clear();
+                NumberList.Add(labelresult.Text);
+                加 -= button加_Click;
+                減 -= button減_Click;
+                乘 -= button乘_Click;
+                除 -= button除_Click;
+                等於 -= button等於_Click;
+            }
+        }
+        /// <summary>
+        /// 上輪計算未歸零情況下點擊功能鍵 >> 確保可以繼續運算
+        /// </summary>
+        private bool Check_Reset_NotReturnToZero_ForOperationButton() //尚未歸零的情況下點擊功能鍵，應將現有數字視為Number1
+        {
+            if(等於 == null)
+            {
+                return true; //有歸零
+            }
+            if (等於 != null)
+            {
+                MessageBox.Show("請注意，您尚未歸零");
+                NumberList.Clear();
+                NumberList.Add(labelresult.Text);
+                Number1 = GetNumber();
+                加 -= button加_Click;
+                減 -= button減_Click;
+                乘 -= button乘_Click;
+                除 -= button除_Click;
+                等於 -= button等於_Click;
+            }
+            return false;//沒有歸零
         }
         /// <summary>
         /// 檢查目前計算之字串長度，確保沒有數字輸入的情況下不會開始計算
