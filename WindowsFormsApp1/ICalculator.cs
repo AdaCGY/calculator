@@ -20,5 +20,6 @@ namespace WindowsFormsApp1
         event EventHandler 等於;
         event EventHandler 小數點;
         event EventHandler 未歸零;
+        event EventHandler 刪除;
     }
 }

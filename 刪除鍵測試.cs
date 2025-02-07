@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,7 +14,7 @@ namespace WindowsFormsApp1
     public partial class Form1 : Form, ICalculator, ICaluValidation
     {
         List<string> NumberList = new List<string>();
-        List<string>HistoryList = new List<string>();
+        Stack<Dictionary<string, string>> HistoryStack = new Stack<Dictionary<string, string>>();
 
         public event EventHandler 加;
         public event EventHandler 減;
@@ -116,26 +117,30 @@ namespace WindowsFormsApp1
                 加 += button加_Click;
                 未歸零 += button加_Click;
             }
-            if(NumberList.Count == 0 && 未歸零 == null)
+            if (NumberList.Count == 0 && 未歸零 == null && 刪除 == null)
             {
                 return;
             }
+            刪除 -= buttondelete_Click;
             未歸零 -= button加_Click;
             小數點 -= button點_Click;
             if (減 != null || 乘 != null || 除 != null)
             {
                 if (減 != null)
                 {
+                    HistoryStack.Push(GetHistory(subtract));
                     Number2 = GetNumber();
                     Number1 = Subtract(Number1, Number2);
                 }
                 if (乘 != null)
                 {
+                    HistoryStack.Push(GetHistory(multiply));
                     Number2 = GetNumber();
                     Number1 = Multiply(Number1, Number2);
                 }
                 if (除 != null)
                 {
+                    HistoryStack.Push(GetHistory(divide));
                     Number2 = GetNumber();
                     Number1 = Divide(Number1, Number2);
                 }
@@ -143,6 +148,7 @@ namespace WindowsFormsApp1
 
             if (加 != null)
             {
+                HistoryStack.Push(GetHistory(add));
                 Number2 = GetNumber();
                 Number1 = Add(Number1, Number2);
                 labelresult.Text +=add;
@@ -175,11 +181,12 @@ namespace WindowsFormsApp1
                 減 += button減_Click;
                 未歸零 += button減_Click;
             }
-            if (NumberList.Count == 0 && 未歸零 == null)
+            if (NumberList.Count == 0 && 未歸零 == null && 刪除 == null)
             {
                 return;
             }
-            未歸零 -= button減_Click;
+            刪除 -= buttondelete_Click;
+            未歸零 -= button加_Click;
             小數點 -= button點_Click;
             if (加 != null || 乘 != null || 除 != null) //先檢查前面是否有其他運算未結束，檢查後再來看減號(此按鈕主功能)部分
             {
@@ -237,10 +244,11 @@ namespace WindowsFormsApp1
                 乘 += button乘_Click;
                 未歸零 += button乘_Click;
             }
-            if (NumberList.Count == 0 && 未歸零 == null)
+            if (NumberList.Count == 0 && 未歸零 == null && 刪除==null)
             {
                 return;
             }
+            刪除 -= buttondelete_Click;
             未歸零 -= button乘_Click;
             小數點 -= button點_Click;
             if (減 != null || 加 != null || 除 != null)
@@ -296,10 +304,11 @@ namespace WindowsFormsApp1
                 除 += button除_Click;
                 未歸零 += button除_Click;
             }
-            if (NumberList.Count == 0 && 未歸零 == null)
+            if (NumberList.Count == 0 && 未歸零 == null && 刪除 == null)
             {
                 return;
             }
+            刪除 -= buttondelete_Click;
             未歸零 -= button除_Click;
             小數點 -= button點_Click;
             if (減 != null || 乘 != null || 加 != null)
@@ -328,8 +337,7 @@ namespace WindowsFormsApp1
                 labelresult.Text +=divide;
             }
 
-
-            if (除 == null)
+            if (除 == null )
             {
                 除 += button除_Click;
                 if (減 == null && 乘 == null && 加 == null)
@@ -379,6 +387,10 @@ namespace WindowsFormsApp1
             {
                 Result = Divide(Number1, Number2);
             }
+            if (刪除 != null)
+            {
+                Result = Number1;
+            }
             labelresult.Text += Result.ToString();
             richTextBox紀錄.Text += labelresult.Text + "\n";
             labelresult.Text = Result.ToString();
@@ -399,34 +411,120 @@ namespace WindowsFormsApp1
         }
 
         //要可以刪除數字、功能鍵
-        private void buttondelete_Click(object sender, EventArgs e) //-------------------------------- 此功能尚有許多bug(刪除小數點、刪除功能鍵)
+        private void buttondelete_Click(object sender, EventArgs e) //-------------------------------- 此功能尚有bug(刪除小數點、刪除功能鍵)
         {
             LengthValidation("請輸入數字，現在沒有數字可以刪除");
             if (等於 != null) 
             {
                 return;
             }
-            //重置現有資料並根據刪除後留下的數字和符號去做運算
-            /*var number_end = NumberList.LastOrDefault();
-            NumberList.Remove(number_end);
-            var str = labelresult.Text.Length;
-            labelresult.Text = labelresult.Text.Substring(0, str - 1);*/
-            //先將留下的字全部整理，使用功能鍵區分數字，把數字加入numberlist，接著根據功能鍵去做相應的運算
-            NumberList.Clear();
-            var str = labelresult.Text.Length;
-            labelresult.Text = labelresult.Text.Substring(0, str - 1);
-            string[] newResult = labelresult.Text.Split(new char[4] {'+', '-', 'x', '÷' },StringSplitOptions.RemoveEmptyEntries);
-            foreach(string newNumber in newResult)
+
+            if (加 == null && 減 == null && 乘 == null && 除 == null &&刪除==null)
             {
-                NumberList.Add(newNumber); //重新整理現有數字
+                var number_end = NumberList.LastOrDefault();
+                NumberList.Remove(number_end);
+                var str = labelresult.Text.Length;
+                labelresult.Text = labelresult.Text.Substring(0, str - 1);
             }
-            List<string> newOperationResult = new List<string>();
-            string[] newResult2 = labelresult.Text.Split(new char[10] { '1', '2', '3', '4' , '5', '6', '7', '8','9','0' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string newOperation in newResult2)
+
+            if (加 != null || 減 != null || 乘 != null || 除 != null) 
             {
-                newOperationResult.Add(newOperation); //重新整理現有功能鍵
+                if (NumberList.Count != 0) //先檢查numberlist裡面是否還有
+                {
+                    //將刪除數字從list中移除
+                    var number_end = NumberList.LastOrDefault();
+                    NumberList.Remove(number_end);
+                    var str = labelresult.Text.Length;
+                    labelresult.Text = labelresult.Text.Substring(0, str - 1);
+                }
+                if (NumberList.Count == 0) //先檢查numberlist裡面是否還有
+                {
+                    //numberlist清空之後，會出現兩種情況1.結尾是功能鍵//(刪除後將失去最後訂閱選項>>"等於"須修正)2.結尾是數字
+                    //當前結尾為運算符號
+                    if (labelresult.Text.ToCharArray().Select(c => c.ToString()).ToList().Last() == add || labelresult.Text.ToCharArray().Select(c => c.ToString()).ToList().Last() == subtract
+                    || labelresult.Text.ToCharArray().Select(c => c.ToString()).ToList().Last() == multiply || labelresult.Text.ToCharArray().Select(c => c.ToString()).ToList().Last() == divide)
+                    {
+                        刪除 += buttondelete_Click;
+                        switch ((labelresult.Text.ToCharArray().Select(c => c.ToString()).ToList().Last()))
+                        {
+                            case "+":
+                                加 -= button加_Click;
+                                break;
+                            case "-":
+                                減 -= button減_Click;
+                                break;
+                            case "*":
+                                乘 -= button乘_Click;
+                                break;
+                            case "÷":
+                                除 -= button除_Click;
+                                break;
+                        }
+                        var str = labelresult.Text.Length;
+                        labelresult.Text = labelresult.Text.Substring(0, str - 1);
+                    }
+                }
             }
-            
+            if (加 == null && 減 == null && 乘 == null && 除 == null && 刪除 != null)//沒有訂閱項目:1.numberlist還有值 2.numberlist沒有值
+            {
+                var topElement = HistoryStack.Peek();
+                if (NumberList.Count == 0)
+                {
+                    //目前失去最後訂閱事件 number1應先還原，再根據後面數字與符號再次計算存回number1
+                    foreach (string n in topElement.Values.First().ToCharArray().Select(c => c.ToString()).ToList())
+                    {
+                        NumberList.Add(n);
+                    }
+                    //先還原Number1
+                    var preNumber = GetNumber_FroDelete();
+                    if (topElement.Keys.First() == add)
+                    {
+                        Number1 -= preNumber;
+                    }
+                    else if (topElement.Keys.First() == subtract)
+                    {
+                        Number1 += preNumber;
+                    }
+                    else if (topElement.Keys.First() == multiply)
+                    {
+                        Number1 /= preNumber;
+                    }
+                    else if (topElement.Keys.First() == divide)
+                    {
+                        Number1 *= preNumber;
+                    }
+                }
+                if (NumberList.Count != 0) 
+                {
+                    //將刪除數字從list中移除
+                    var number_end = NumberList.LastOrDefault();
+                    NumberList.Remove(number_end);
+                    //根據刪除後的新數字還原number1
+                    var reNewNumber = GetNumber_FroDelete();
+                    if (topElement.Keys.First() == add)
+                    {
+                        Number1 = Add(Number1, reNewNumber);
+                    }
+                    else if (topElement.Keys.First() == subtract)
+                    {
+                        Number1 = Subtract(Number1, reNewNumber);
+                    }
+                    else if (topElement.Keys.First() == multiply)
+                    {
+                        Number1 = Multiply(Number1, reNewNumber);
+                    }
+                    else if (topElement.Keys.First() == divide)
+                    {
+                        Number1 = Divide(Number1, reNewNumber);
+                    }
+                }
+
+                //將刪除數字從labelresult移除
+                var str = labelresult.Text.Length;
+                labelresult.Text = labelresult.Text.Substring(0, str - 1);
+
+            }
+
         }
 
 
@@ -440,6 +538,16 @@ namespace WindowsFormsApp1
             除 -= button除_Click;
             等於 -= button等於_Click;
         }
+        public decimal GetNumber_FroDelete()
+        {
+            string n = string.Empty;
+            foreach (string s in NumberList)
+            {
+                n += s;
+            }
+            bool issuccess = decimal.TryParse(n, out decimal number);
+            return number;
+        }
 
         public decimal GetNumber()
         {
@@ -451,6 +559,21 @@ namespace WindowsFormsApp1
             NumberList.Clear();
             return number;
 
+        }/// <summary>
+        /// 將數字以及其對應運算符號打包儲存(運算符號在前，數字在後)
+        /// </summary>
+        /// <param name="Operation"></param>
+        /// <returns></returns>
+        public Dictionary<string,string> GetHistory(string Operation) 
+        {
+            var history = new Dictionary<string,string>();
+            string n = string.Empty;
+            foreach (string s in NumberList)
+            {
+                n += s;
+            }
+            history.Add(Operation,n);
+            return history;
         }
 
         public decimal Add(decimal n1, decimal n2)
@@ -481,6 +604,7 @@ namespace WindowsFormsApp1
             減 -= button減_Click;
             乘 -= button乘_Click;
             除 -= button除_Click;
+            刪除 -= buttondelete_Click;
             等於 -= button等於_Click;
         }
         /// <summary>
@@ -501,6 +625,7 @@ namespace WindowsFormsApp1
                 減 -= button減_Click;
                 乘 -= button乘_Click;
                 除 -= button除_Click;
+                刪除 -= buttondelete_Click;
                 等於 -= button等於_Click;
             }
         }
@@ -523,6 +648,7 @@ namespace WindowsFormsApp1
                 減 -= button減_Click;
                 乘 -= button乘_Click;
                 除 -= button除_Click;
+                刪除 -= buttondelete_Click;
                 等於 -= button等於_Click;
             }
             return false;//沒有歸零
@@ -539,11 +665,12 @@ namespace WindowsFormsApp1
                 throw new Exception(message);
             }
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     } 
     
-    interface ICaluValidation
-    {
-        void LengthValidation(string message);
-
-    }
+   
 }
